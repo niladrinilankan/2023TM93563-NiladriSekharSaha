@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN"
+"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="exchange">
+    <typeAlias alias="bookListBean" type="book_list.bean.BookListBean"/>
+    <typeAlias alias="exchangeTransactionBean" type="exchange.bean.ExchangeTransactionBean"/>
+  
+    <insert id="placeExchangeRequest" parameterClass="exchangeTransactionBean">
+        insert into t_exchange_request (sender_id, receiver_id, book_id, delivery_method, exchange_duration, transaction_date, transaction_status) values
+        (#sender_id#, #receiver_id#, #book_id#, #delivery_method#, #exchange_duration#, now(), #transaction_status#)
+    </insert>
+    <select id="getPendingExchangeTransactionList" resultClass="exchangeTransactionBean" parameterClass="int">
+        SELECT
+        transaction_id as transaction_id,
+        sender_id as sender_id,
+        (SELECT name FROM fstpdb.m_beneficiary where id=sender_id) as sender_name,
+        receiver_id,
+        (SELECT name FROM fstpdb.m_beneficiary where id=receiver_id) as receiver_name,
+        book_id,
+        (select concat(c.book_id,'_',c.beneficiary_id) as book_ser_no from m_book_list c where c.book_id=a.book_id) as book_ser_no,
+        (select title as title from m_book_list c where c.book_id=a.book_id) as title,
+        delivery_method,
+        exchange_duration,
+        date_format(transaction_date,'%d/%m/%Y') as transaction_date,
+        transaction_status
+        FROM
+        fstpdb.t_exchange_request a
+        where
+        receiver_id=#receiver_id# and
+        transaction_status in ('Pending')
+    </select>
+    <select id="getAllTransactionList" resultClass="exchangeTransactionBean" parameterClass="int">
+        SELECT
+        transaction_id as transaction_id,
+        sender_id as sender_id,
+        (SELECT name FROM fstpdb.m_beneficiary where id=sender_id) as sender_name,
+        receiver_id,
+        (SELECT name FROM fstpdb.m_beneficiary where id=receiver_id) as receiver_name,
+        book_id,
+        (select concat(c.book_id,'_',c.beneficiary_id) as book_ser_no from m_book_list c where c.book_id=a.book_id) as book_ser_no,
+        (select title as title from m_book_list c where c.book_id=a.book_id) as title,
+        delivery_method,
+        exchange_duration,
+        date_format(transaction_date,'%d/%m/%Y') as transaction_date,
+        transaction_status
+        FROM
+        fstpdb.t_exchange_request a
+        where
+        receiver_id=#receiver_id# or 
+        sender_id=#receiver_id#
+    </select>
+    <select id="getTransactionDetails" resultClass="exchangeTransactionBean" parameterClass="int">
+        SELECT transaction_id, sender_id, receiver_id, book_id, delivery_method, exchange_duration, transaction_date, transaction_status FROM fstpdb.t_exchange_request where transaction_id=#transaction_id#
+    </select>
+    <update id="modifyExchangeRequest" parameterClass="exchangeTransactionBean">
+        update t_exchange_request 
+        set delivery_method=#delivery_method#, 
+        exchange_duration=#exchange_duration#, 
+        transaction_date=now(), 
+        transaction_status=#transaction_status#
+        where
+        transaction_id=#transaction_id,#
+    </update>
+     <update id="replyExchangeRequest" parameterClass="exchangeTransactionBean">
+        update t_exchange_request 
+        set 
+        transaction_date=now(), 
+        transaction_status=#transaction_status#
+        where
+        transaction_id=#transaction_id,#
+    </update>
+</sqlMap>
+
+
+
+
+
+ 

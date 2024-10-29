@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN"
+"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="register">
+    <typeAlias alias="registerBean" type="register.bean.RegistrationBean"/>
+
+
+    <insert id="addRegistrationDetails" parameterClass="registerBean">
+        INSERT INTO m_beneficiary (name, email, password, update_date, updated_by)
+        VALUES (#name#, #email#, md5(#password#), now(), #updated_by#)
+    </insert>    
+    <insert id="resetPassword" parameterClass="registerBean">
+        update m_beneficiary set password= md5(#password#) where email=#email#
+    </insert>  
+    
+</sqlMap>
+
+
+
+
+
+ 
