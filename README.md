@@ -14,6 +14,15 @@ Download Tomcat from the Apache Tomcat website.
 Extract the downloaded archive to your preferred directory.
 Set up the environment variables for CATALINA_HOME.
 
+**Configure the Database**
+Create a Database: Log in to MySQL and create a database for eBookExchange
+mysql -uroot -p fstpdb 
+your_password
+Open Command prompt and Do the following,
+cd your-repository/DB/
+mysql -uroot -p fstpdb < fstpdb.sql
+
+
 **Deploy the WAR File**
 cp your-repository/WAR/eBookExchange.war $CATALINA_HOME/webapps/
 
