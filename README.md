@@ -33,5 +33,9 @@ cp your-repository/WAR/eBookExchange.war $CATALINA_HOME/webapps/
 cd $CATALINA_HOME/bin
 ./startup.sh
 
-**Access the Application from any Browser**
+**Access the Application from any Browser** 
 URL:- http://localhost:8080/eBookExchange  
+
+**Default Credentials**
+User Name- niladri.saha@live.com
+Password- Cdac@123
